@@ -3,10 +3,14 @@
 	"EngineAssociation": "5.7",
 	"Category": "",
 	"Description": "",
-	"Plugins": [
+	"Modules": [
 		{
-			"Name": "ConsoleVariables",
-			"Enabled": true
+			"Name": "L20260408_First",
+			"Type": "Runtime",
+			"LoadingPhase": "Default",
+			"AdditionalDependencies": [
+				"Engine"
+			]
 		}
 	]
 }
