@@ -9,6 +9,7 @@
 #include "Camera/CameraComponent.h"
 #include "GameFramework/SpringArmComponent.h"
 #include "GameFramework/FloatingPawnMovement.h"
+#include "Kismet/GameplayStatics.h"
 
 
 // Sets default values
@@ -76,6 +77,19 @@ void AMyPawn::BeginPlay()
 void AMyPawn::Tick(float DeltaTime)
 {
 	Super::Tick(DeltaTime);
+
+	AddMovementInput(GetActorForwardVector());
+
+	RotatePropeller(Left, 7200.f);
+	RotatePropeller(Right, 7200.f);
+	//Left->AddLocalRotation(FRotator(0, 0, 7200.f * DeltaTime));
+	//Right->AddLocalRotation(FRotator(0, 0, 7200.f * DeltaTime));
+
+}
+
+void AMyPawn::RotatePropeller(USceneComponent* Where, float RotaionSpeed)
+{
+	Where->AddLocalRotation(FRotator(0, 0, RotaionSpeed * UGameplayStatics::GetWorldDeltaSeconds(GetWorld())));
 
 }
 
