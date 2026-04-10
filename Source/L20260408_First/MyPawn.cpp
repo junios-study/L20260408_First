@@ -10,12 +10,12 @@
 #include "GameFramework/SpringArmComponent.h"
 #include "GameFramework/FloatingPawnMovement.h"
 #include "Kismet/GameplayStatics.h"
-
+#include "MyStaticMeshComponent.h"
 
 // Sets default values
 AMyPawn::AMyPawn()
 {
- 	// Set this pawn to call Tick() every frame.  You can turn this off to improve performance if you don't need it.
+	// Set this pawn to call Tick() every frame.  You can turn this off to improve performance if you don't need it.
 	PrimaryActorTick.bCanEverTick = true;
 
 	Box = CreateDefaultSubobject<UBoxComponent>(TEXT("Box"));
@@ -33,10 +33,10 @@ AMyPawn::AMyPawn()
 		Body->SetStaticMesh(SM_Body.Object);
 	}
 
-	Left = CreateDefaultSubobject<UStaticMeshComponent>(TEXT("Left"));
+	Left = CreateDefaultSubobject<UMyStaticMeshComponent>(TEXT("Left"));
 	Left->SetupAttachment(Body);
 
-	Right = CreateDefaultSubobject<UStaticMeshComponent>(TEXT("Right"));
+	Right = CreateDefaultSubobject<UMyStaticMeshComponent>(TEXT("Right"));
 	Right->SetupAttachment(Body);
 
 	static ConstructorHelpers::FObjectFinder<UStaticMesh> SM_Propeller(TEXT("/Script/Engine.StaticMesh'/Game/P38/Meshes/SM_P38_Propeller.SM_P38_Propeller'"));
@@ -57,12 +57,14 @@ AMyPawn::AMyPawn()
 	SpringArm->SetupAttachment(Box);
 	SpringArm->SocketOffset = FVector(0, 0, 33.33f);
 	SpringArm->TargetArmLength = 120.0f;
+	SpringArm->bEnableCameraLag = true;
+	SpringArm->bEnableCameraRotationLag = true;
 
 	Camera = CreateDefaultSubobject<UCameraComponent>(TEXT("Camera"));
 	Camera->SetupAttachment(SpringArm);
 
 	Movement = CreateDefaultSubobject<UFloatingPawnMovement>(TEXT("Movement"));
-	Movement->MaxSpeed = 1000.0f;
+	Movement->MaxSpeed = MoveSpeed;
 
 }
 
@@ -70,7 +72,7 @@ AMyPawn::AMyPawn()
 void AMyPawn::BeginPlay()
 {
 	Super::BeginPlay();
-	
+
 }
 
 // Called every frame
@@ -78,10 +80,10 @@ void AMyPawn::Tick(float DeltaTime)
 {
 	Super::Tick(DeltaTime);
 
-	AddMovementInput(GetActorForwardVector());
+	AddMovementInput(GetActorForwardVector(), BoostValue);
 
-	RotatePropeller(Left, 7200.f);
-	RotatePropeller(Right, 7200.f);
+	//RotatePropeller(Left, PropellerRotationSpeed);
+	//RotatePropeller(Right, PropellerRotationSpeed);
 	//Left->AddLocalRotation(FRotator(0, 0, 7200.f * DeltaTime));
 	//Right->AddLocalRotation(FRotator(0, 0, 7200.f * DeltaTime));
 
@@ -98,5 +100,35 @@ void AMyPawn::SetupPlayerInputComponent(UInputComponent* PlayerInputComponent)
 {
 	Super::SetupPlayerInputComponent(PlayerInputComponent);
 
+	PlayerInputComponent->BindAxis(TEXT("Pitch"), this, &AMyPawn::Pitch);
+	PlayerInputComponent->BindAxis(TEXT("Roll"), this, &AMyPawn::Roll);
+	PlayerInputComponent->BindAction(TEXT("Fire"), EInputEvent::IE_Pressed, this, &AMyPawn::Fire);
+	PlayerInputComponent->BindAction(TEXT("Boost"), EInputEvent::IE_Pressed, this, &AMyPawn::Boost);
+	PlayerInputComponent->BindAction(TEXT("Boost"), EInputEvent::IE_Released, this, &AMyPawn::Unboost);
+
+}
+
+void AMyPawn::Pitch(float Value)
+{
+	AddActorLocalRotation(FRotator(RotationSpeed * Value * UGameplayStatics::GetWorldDeltaSeconds(GetWorld()), 0, 0));
+}
+
+void AMyPawn::Roll(float Value)
+{
+	AddActorLocalRotation(FRotator(0, 0, RotationSpeed * Value * UGameplayStatics::GetWorldDeltaSeconds(GetWorld())));
+}
+
+void AMyPawn::Fire()
+{
+}
+
+void AMyPawn::Boost()
+{
+	BoostValue = 1.0f;
+}
+
+void AMyPawn::Unboost()
+{
+	BoostValue = 0.5f;
 }
 

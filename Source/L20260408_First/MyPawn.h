@@ -13,6 +13,7 @@ class UArrowComponent;
 class USpringArmComponent;
 class UCameraComponent;
 class UFloatingPawnMovement;
+class UMyStaticMeshComponent;
 
 
 UCLASS()
@@ -44,10 +45,10 @@ public:
 	TObjectPtr<UStaticMeshComponent> Body;
 
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = Components)
-	TObjectPtr<UStaticMeshComponent> Left;
+	TObjectPtr<UMyStaticMeshComponent> Left;
 
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = Components)
-	TObjectPtr<UStaticMeshComponent> Right;
+	TObjectPtr<UMyStaticMeshComponent> Right;
 
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = Components)
 	TObjectPtr<UArrowComponent> Arrow;
@@ -60,5 +61,27 @@ public:
 
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = Components)
 	TObjectPtr<UFloatingPawnMovement> Movement;
+
+	void Pitch(float Value);
+
+	void Roll(float Value);
+
+	void Fire();
+
+	void Boost();
+
+	void Unboost();
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = Data)
+	float MoveSpeed = 1000.0f;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = Data)
+	float RotationSpeed = 60.0f;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = Data)
+	float BoostValue = 0.5f;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = Data)
+	float PropellerRotationSpeed = 7200.0f;
 
 };
