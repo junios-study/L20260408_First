@@ -12,6 +12,8 @@
 #include "Kismet/GameplayStatics.h"
 #include "MyStaticMeshComponent.h"
 
+#include "MyActor.h"
+
 // Sets default values
 AMyPawn::AMyPawn()
 {
@@ -64,7 +66,8 @@ AMyPawn::AMyPawn()
 	Camera->SetupAttachment(SpringArm);
 
 	Movement = CreateDefaultSubobject<UFloatingPawnMovement>(TEXT("Movement"));
-	Movement->MaxSpeed = MoveSpeed;
+	//Movement->MaxSpeed = MoveSpeed;
+	Movement->MaxSpeed = 0;
 
 }
 
@@ -120,6 +123,8 @@ void AMyPawn::Roll(float Value)
 
 void AMyPawn::Fire()
 {
+	GetWorld()->SpawnActor<AMyActor>(AMyActor::StaticClass(),
+		Arrow->K2_GetComponentToWorld());
 }
 
 void AMyPawn::Boost()
