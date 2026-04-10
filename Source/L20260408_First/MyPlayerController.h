@@ -6,6 +6,9 @@
 #include "GameFramework/PlayerController.h"
 #include "MyPlayerController.generated.h"
 
+
+
+
 /**
  * 
  */
@@ -14,4 +17,9 @@ class L20260408_FIRST_API AMyPlayerController : public APlayerController
 {
 	GENERATED_BODY()
 	
+public:
+	AMyPlayerController();
+
+
+
 };
